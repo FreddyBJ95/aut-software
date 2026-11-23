@@ -1,4 +1,4 @@
-name: Deploy Pipe-bend
+name: Deploy aut-software
 on:
   push:
     branches: [main]
