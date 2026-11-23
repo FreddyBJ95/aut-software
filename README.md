@@ -7,6 +7,7 @@ Noter og små værktøjer til automatikteknikeruddannelsen i Norge. Repoet er by
 | App | Formål | Offentlig adresse |
 | --- | --- | --- |
 | [Pipe-bend](./Pipe-bend/) | Planlægning, beregning og dokumentation af rørbuk | <https://freddybj95.github.io/aut-software/Pipe-bend/> |
+| [Interlock Test Simulator](./Interlock-test-simulator/) | Signalberegning og dokumentation af interlock-tests | <https://freddybj95.github.io/aut-software/Interlock-test-simulator/> |
 
 ## Struktur
 
@@ -14,6 +15,11 @@ Noter og små værktøjer til automatikteknikeruddannelsen i Norge. Repoet er by
 aut-software/
 ├── index.html
 ├── Pipe-bend/
+│   ├── index.html
+│   ├── manifest.webmanifest
+│   ├── sw.js
+│   └── README.md
+├── Interlock-test-simulator/
 │   ├── index.html
 │   ├── manifest.webmanifest
 │   ├── sw.js
@@ -37,12 +43,20 @@ python3 -m http.server 8080
 
 - Samlingens forside: <http://localhost:8080/>
 - Pipe-bend: <http://localhost:8080/Pipe-bend/>
+- Interlock Test Simulator: <http://localhost:8080/Interlock-test-simulator/>
 
 Kør Pipe-bend-testene med:
 
 ```sh
 cd Pipe-bend
 for test_file in *test.mjs; do node "$test_file" || exit 1; done
+```
+
+Kør Interlock Test Simulator-testene med:
+
+```sh
+cd Interlock-test-simulator
+npm test
 ```
 
 ## Udgivelse
