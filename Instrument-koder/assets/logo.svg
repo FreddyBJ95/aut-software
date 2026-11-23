@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">IK Instrumentkoder</title>
+  <desc id="desc">Teknisk tegnet logo med bogstaverne IK og et instrumentsymbol.</desc>
+  <defs>
+    <filter id="paper" x="-10%" y="-10%" width="120%" height="120%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="2" seed="17" result="noise"/>
+      <feColorMatrix in="noise" type="saturate" values="0" result="mono"/>
+      <feComponentTransfer in="mono" result="fade"><feFuncA type="table" tableValues="0 0.08"/></feComponentTransfer>
+      <feBlend in="SourceGraphic" in2="fade" mode="multiply"/>
+    </filter>
+  </defs>
+  <rect width="512" height="512" rx="28" fill="#d8edf2"/>
+  <g filter="url(#paper)" stroke="#123b4a" fill="none">
+    <rect x="22" y="22" width="468" height="468" rx="17" stroke-width="5"/>
+    <rect x="34" y="34" width="444" height="444" rx="12" stroke-width="2"/>
+    <path d="M58 355h122c38 0 52-82 92-82h174" stroke-width="9" stroke-linecap="round"/>
+    <path d="M58 382h122c56 0 66-82 107-82h159" stroke-width="2" opacity=".45"/>
+    <circle cx="358" cy="273" r="52" fill="#d8edf2" stroke-width="5"/>
+    <path d="M358 221v104M306 273h104" stroke-width="2" opacity=".45"/>
+    <path d="M358 325v61" stroke-width="5"/>
+    <path d="M325 386h66l-33 36z" fill="#123b4a" stroke-width="3"/>
+    <path d="M76 430h328M76 420v20M404 420v20" stroke-width="2"/>
+  </g>
+  <text x="58" y="205" fill="#123b4a" font-family="Georgia, 'Times New Roman', serif" font-size="186" font-weight="700" letter-spacing="-14">IK</text>
+  <text x="337" y="287" fill="#123b4a" font-family="Arial, sans-serif" font-size="34" font-weight="700">TI</text>
+  <text x="208" y="458" fill="#123b4a" font-family="Georgia, serif" font-size="22" font-style="italic">instrumentkoder</text>
+</svg>

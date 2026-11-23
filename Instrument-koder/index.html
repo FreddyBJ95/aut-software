@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="da">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#123b4a">
+  <meta name="description" content="Instrumentkode-opslag med træning og kundespecifikke kodebiblioteker.">
+  <title>IK Instrumentkoder</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="assets/icon-192.png">
+  <link rel="apple-touch-icon" href="assets/icon-192.png">
+  <link rel="stylesheet" href="styles.css?v=4">
+</head>
+<body>
+  <header class="app-header">
+    <a class="brand" href="#opslag" aria-label="IK Instrumentkoder – gå til opslag">
+      <img src="assets/logo.svg?v=4" alt="" width="64" height="64">
+      <span><strong>Instrumentkoder</strong><small data-i18n="brandTagline">opslag · kunder · træning</small></span>
+    </a>
+    <div class="header-actions">
+      <label class="language-picker"><span data-i18n="language">Sprog</span>
+        <select id="language-select" aria-label="Sprog"><option value="da">Dansk</option><option value="en">English</option><option value="no">Norsk</option></select>
+      </label>
+      <label class="customer-picker"><span data-i18n="activeCustomer">Aktiv kunde</span>
+        <select id="customer-select" aria-label="Aktiv kunde"></select>
+      </label>
+      <button id="install-button" class="button secondary" type="button" data-i18n="install">Installer app</button>
+    </div>
+  </header>
+
+  <nav class="tabs" aria-label="Hovednavigation">
+    <button class="tab active" type="button" data-tab="lookup" data-i18n="lookupTab">Opslag</button>
+    <button class="tab" type="button" data-tab="training" data-i18n="trainingTab">Træning</button>
+    <button class="tab" type="button" data-tab="customers" data-i18n="customersTab">Kunder og egne koder</button>
+    <button class="tab" type="button" data-tab="letters" data-i18n="lettersTab">Bogstavnøgle</button>
+  </nav>
+
+  <main>
+    <section id="lookup-panel" class="panel active" aria-labelledby="lookup-title">
+      <div class="section-heading">
+        <div><p class="eyebrow" data-i18n="library">Kodebibliotek</p><h1 id="lookup-title" data-i18n="findCode">Find en instrumentkode</h1></div>
+        <p id="library-summary" class="muted"></p>
+      </div>
+      <div class="filters paper-card">
+        <label><span data-i18n="search">Søg</span>
+          <input id="search-input" type="search" placeholder="Fx TI, tryk, alarm eller ventil" data-i18n-placeholder="searchPlaceholder" autocomplete="off">
+        </label>
+        <label><span data-i18n="category">Kategori</span>
+          <select id="category-filter"></select>
+        </label>
+        <label class="check"><input id="customer-only" type="checkbox"> <span data-i18n="customerOnly">Kun kundekoder</span></label>
+      </div>
+      <div class="lookup-layout">
+        <div><p id="result-count" class="muted result-count" aria-live="polite"></p><div id="code-grid" class="code-grid"></div></div>
+        <article id="code-detail" class="paper-card code-detail" aria-live="polite"></article>
+      </div>
+    </section>
+
+    <section id="training-panel" class="panel" aria-labelledby="training-title" hidden>
+      <div class="section-heading"><div><p class="eyebrow" data-i18n="practice">Øvelse</p><h1 id="training-title" data-i18n="trainCodes">Træn koderne</h1></div></div>
+      <div class="training-options paper-card">
+        <label><span data-i18n="category">Kategori</span><select id="training-category"></select></label>
+        <label><span data-i18n="questions">Spørgsmål</span><select id="training-count"><option>5</option><option selected>10</option><option>15</option><option>20</option></select></label>
+        <label class="check"><input id="training-customer" type="checkbox" checked> <span data-i18n="includeCustomer">Medtag kundekoder</span></label>
+        <button id="new-quiz" class="button" type="button" data-i18n="newQuiz">Ny quiz</button>
+      </div>
+      <div id="quiz-stats" class="stats"></div>
+      <article id="quiz-card" class="paper-card quiz-card"></article>
+    </section>
+
+    <section id="customers-panel" class="panel" aria-labelledby="customers-title" hidden>
+      <div class="section-heading">
+        <div><p class="eyebrow" data-i18n="customerLibraries">Kundebiblioteker</p><h1 id="customers-title" data-i18n="customersTab">Kunder og egne koder</h1></div>
+        <button id="add-customer" class="button" type="button" data-i18n="newCustomer">Ny kunde</button>
+      </div>
+      <div class="customer-layout">
+        <aside class="paper-card"><h2 data-i18n="customers">Kunder</h2><div id="customer-list" class="customer-list"></div><div class="button-row customer-tools"><button id="edit-customer" class="button secondary small" type="button" data-i18n="edit">Redigér</button><button id="delete-customer" class="button danger small" type="button" data-i18n="delete">Slet</button></div></aside>
+        <div class="paper-card customer-codes">
+          <div class="subheading"><div><h2 id="customer-code-title"></h2><p id="customer-code-count" class="muted"></p></div><button id="add-code" class="button" type="button" data-i18n="addCode">Tilføj kode</button></div>
+          <div id="customer-code-table" class="table-wrap"></div>
+        </div>
+      </div>
+      <div class="paper-card data-tools">
+        <div><h2 data-i18n="backup">Sikkerhedskopi</h2><p class="muted" data-i18n="backupHelp">Eksportér alle kunder og koder som JSON, eller indlæs en tidligere sikkerhedskopi.</p></div>
+        <div class="button-row"><button id="export-data" class="button secondary" type="button" data-i18n="exportData">Eksportér data</button><label class="button secondary file-button"><span data-i18n="importData">Importér data</span><input id="import-data" type="file" accept="application/json" hidden></label></div>
+      </div>
+    </section>
+
+    <section id="letters-panel" class="panel" aria-labelledby="letters-title" hidden>
+      <div class="section-heading"><div><p class="eyebrow" data-i18n="reference">Reference</p><h1 id="letters-title" data-i18n="lettersTab">Bogstavnøgle</h1></div><p class="muted" data-i18n="checkLegend">Kontrollér altid kundens tegningsforklaring.</p></div>
+      <h2 data-i18n="firstLetter">Første bogstav</h2><div id="first-letter-grid" class="letter-grid"></div>
+      <h2 data-i18n="functionLetters">Funktionsbogstaver</h2><div id="function-letter-grid" class="letter-grid"></div>
+    </section>
+  </main>
+
+  <dialog id="customer-dialog">
+    <form method="dialog" id="customer-form" class="dialog-form">
+      <div><p class="eyebrow">Kunde</p><h2 id="customer-dialog-title">Ny kunde</h2></div>
+      <input id="customer-id" type="hidden">
+      <label>Kundenavn<input id="customer-name" required maxlength="60" placeholder="Fx Kunde A"></label>
+      <label>Note<textarea id="customer-note" maxlength="180" rows="3" placeholder="Fx projektnummer eller tegningsstandard"></textarea></label>
+      <p id="customer-error" class="error" role="alert"></p>
+      <div class="dialog-actions"><button class="button secondary" value="cancel" type="button" data-close="customer-dialog">Annuller</button><button class="button" type="submit">Gem kunde</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="code-dialog">
+    <form method="dialog" id="code-form" class="dialog-form">
+      <div><p class="eyebrow">Kundekode</p><h2 id="code-dialog-title">Ny kode</h2></div>
+      <input id="edit-code-original" type="hidden">
+      <div class="form-grid">
+        <label>Kode<input id="custom-code" required maxlength="12" placeholder="Fx HSV"></label>
+        <label>Kategori<input id="custom-category" required maxlength="40" placeholder="Fx Ventiler"></label>
+      </div>
+      <label>Dansk betydning<input id="custom-da" required maxlength="100" placeholder="Fx håndbetjent sikkerhedsventil"></label>
+      <label>Engelsk betydning<input id="custom-en" maxlength="100" placeholder="Valgfrit"></label>
+      <label>Norsk betydning<input id="custom-no" maxlength="100" placeholder="Valgfrit"></label>
+      <label>Forklaring<textarea id="custom-description" maxlength="240" rows="3" placeholder="Hvordan bruges koden hos denne kunde?"></textarea></label>
+      <p id="code-error" class="error" role="alert"></p>
+      <div class="dialog-actions"><button class="button secondary" value="cancel" type="button" data-close="code-dialog">Annuller</button><button class="button" type="submit">Gem kode</button></div>
+    </form>
+  </dialog>
+
+  <div id="detail-dialog" class="detail-dialog" role="dialog" aria-modal="true" aria-labelledby="mobile-detail-title" hidden>
+    <div class="detail-dialog-shell">
+      <div class="detail-dialog-bar">
+        <p id="mobile-detail-title" class="eyebrow" data-i18n="codeExplanation">Kodeforklaring</p>
+        <button id="close-detail-dialog" class="button secondary small" type="button" data-i18n="close">Luk</button>
+      </div>
+      <article id="mobile-code-detail" class="code-detail mobile-code-detail" aria-live="polite"></article>
+    </div>
+  </div>
+
+  <div id="install-help" class="install-help" role="dialog" aria-modal="true" aria-labelledby="install-help-title" hidden>
+    <div class="detail-dialog-shell">
+      <div class="detail-dialog-bar">
+        <p id="install-help-title" class="eyebrow" data-i18n="installTitle">Installer på mobilen</p>
+        <button id="close-install-help" class="button secondary small" type="button" data-i18n="close">Luk</button>
+      </div>
+      <h2 data-i18n="installTitle">Installer på mobilen</h2>
+      <p data-i18n="installIOS">iPhone/iPad: Åbn siden i Safari, tryk Del og vælg “Føj til hjemmeskærm”.</p>
+      <p data-i18n="installAndroid">Android: Åbn siden i Chrome, åbn browsermenuen og vælg “Installer app”.</p>
+      <p class="muted" data-i18n="installOffline">Efter første åbning kan appen også bruges offline.</p>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+  <script src="data.js?v=4"></script>
+  <script src="app.js?v=4"></script>
+</body>
+</html>
