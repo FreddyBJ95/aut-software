@@ -1,24 +1,24 @@
-import {initAppSharing} from './share-app.mjs?v=44';
+import {initAppSharing} from './share-app.mjs?v=45';
 import {SWAGELOK_BENDERS,getBender} from './benders.mjs';
 import {measurementMode,validateMeasurements,convertMeasurementMode,bendMarkLayout} from './measurements.mjs';
-import {roundDisplayedMarks} from './displayed-marks.mjs?v=44';
-import {isProjectId} from './project-storage.mjs?v=44';
-import {initRoomPlanner} from './room-planner.mjs?v=44';
+import {roundDisplayedMarks} from './displayed-marks.mjs?v=45';
+import {isProjectId} from './project-storage.mjs?v=45';
+import {initRoomPlanner} from './room-planner.mjs?v=45';
 import {renderOffsetVisualization} from './offset-visual.mjs';
-import {initTypography} from './typography.mjs?v=44';
-import {placeDimensionLabels} from './dimension-layout.mjs?v=44';
-import {layoutBlankMarks} from './blank-layout.mjs?v=44';
-import {bendReferenceLayout,bestDrawingAngle,readableTextAngle,leaderCrossesPipe} from './labels.mjs?v=44';
-import {t,language,locales,captureTranslations,applyLanguage} from './i18n.mjs?v=44';
+import {initTypography} from './typography.mjs?v=45';
+import {placeDimensionLabels} from './dimension-layout.mjs?v=45';
+import {layoutBlankMarks} from './blank-layout.mjs?v=45';
+import {bendReferenceLayout,bestDrawingAngle,readableTextAngle,leaderCrossesPipe} from './labels.mjs?v=45';
+import {t,language,locales,captureTranslations,applyLanguage} from './i18n.mjs?v=45';
 import{geometry,extend,triangle,practicalOffsetLength,calculate}from'./geometry.mjs';
-import {wallValidationStatus} from './wall-validation-status.mjs?v=44';
-import {createMainPipeDrawing} from './main-pipe-drawing.mjs?v=44';
-import {geometry3D,extendSpatial,validateSpatialState,hasSpatialPipe,bendOrientation,spatialBendRotations} from './spatial-geometry.mjs?v=44';
-import {spatialHeightLayers} from './spatial-layers.mjs?v=44';
-import {createSpatialPipeDrawing,renderSpatialWorkDrawing} from './spatial-drawing.mjs?v=44';
-import {setIconButton} from './ui-icons.mjs?v=44';
-import {materialPlan,suggestMaterialJoints,validateMaterialJoints,jointPoint,pieceLayoutMarks,pieceWorkProject} from './material-sections.mjs?v=44';
-import {bendVisual,bendBadgeLines,bendAccessibleLabel} from './bend-visuals.mjs?v=44';
+import {wallValidationStatus} from './wall-validation-status.mjs?v=45';
+import {createMainPipeDrawing} from './main-pipe-drawing.mjs?v=45';
+import {geometry3D,extendSpatial,validateSpatialState,hasSpatialPipe,bendOrientation,spatialBendRotations} from './spatial-geometry.mjs?v=45';
+import {spatialHeightLayers} from './spatial-layers.mjs?v=45';
+import {createSpatialPipeDrawing,renderSpatialWorkDrawing} from './spatial-drawing.mjs?v=45';
+import {setIconButton} from './ui-icons.mjs?v=45';
+import {materialPlan,suggestMaterialJoints,validateMaterialJoints,jointPoint,pieceLayoutMarks,pieceWorkProject} from './material-sections.mjs?v=45';
+import {bendVisual,bendBadgeLines,bendAccessibleLabel,bendInlineLabelPlacement} from './bend-visuals.mjs?v=45';
 const $=id=>document.getElementById(id),fmt=n=>Number.isFinite(n)?n.toLocaleString(locales[language],{maximumFractionDigits:getBender(state.benderId)?.nativeUnits==='in'?3:1}):'—',fmtAngle=n=>Number.isFinite(n)?n.toLocaleString(locales[language],{maximumFractionDigits:3}):'—';
 function newDrawingNumber(){const d=new Date(),date=[d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('');return 'PB-'+date+'-'+crypto.randomUUID().slice(0,6).toUpperCase();}
 function normalizeProject(s){const name=s.name.trim()||t('Mit første rør');return {...s,projectId:isProjectId(s.projectId)?s.projectId:crypto.randomUUID(),name,configured:s.configured!==false,drawingNumber:s.drawingNumber?.trim()||name,jointClearance:s.jointClearance??50,joints:s.joints??[]};}
@@ -236,7 +236,8 @@ function draw(g,preview,target=$('drawing'),work=false,options={}){
  for(let index=0;index<g.arcs.length;index++){const arc=g.arcs[index];for(let j=0;j<arc.samples.length-1;j+=4)pipe.push({index,polygon:footprint(P(arc.samples[j]),P(arc.samples[Math.min(j+4,arc.samples.length-1)]))});}
  const endpointObstacles=[P(g.start),P(g.end)].map(p=>rect(p[0]-23,p[1]-23,46,46));
 	const layout=bendReferenceLayout(g.arcs,P,{width,height:pageHeight,fontSize:work?18:13,obstacles:endpointObstacles,pipe,maxLeader:28,labelFor:(arc,index,id)=>bendVisual(arc.turn).standard?false:bendBadgeLines(id,arc.turn,{format:fmtAngle,special:t('SPECIAL')})});
- const obstacles=[...pipe.map(p=>p.polygon),...endpointObstacles,...layout.labels.map(p=>p.polygon),...layout.labels.map(p=>footprint(...p.leader,2))];
+	 const placedSpecial=new Set(layout.labels.map(label=>label.index)),inlineBends=new Map(layout.anchors.map(ref=>{const arc=g.arcs[ref.index],visual=bendVisual(arc.turn),inlineText=visual.standard?ref.id:placedSpecial.has(ref.index)?null:ref.id+' · '+t('SPECIAL')+' '+fmtAngle(Math.abs(arc.turn))+'°',fontSize=visual.standard?(work?13:10):(work?12:9.5),paintStroke=work?4:3,placement=inlineText?bendInlineLabelPlacement([ref.x,ref.y],ref.outward||[0,-1],{text:inlineText,fontSize,pipeWidth:work?22:14,paintStroke,width,height:pageHeight,padding:8}):null;return[ref.index,{inlineText,fontSize,paintStroke,placement}];})),inlineBoxes=[...inlineBends.values()].flatMap(item=>item.placement?.visible?[rect(item.placement.box.x,item.placement.box.y,item.placement.box.width,item.placement.box.height)]:[]),inlineLeaders=[...inlineBends.values()].flatMap(item=>item.placement?.visible?[footprint(...item.placement.leader,2)]:[]);
+	 const obstacles=[...pipe.map(p=>p.polygon),...endpointObstacles,...layout.labels.map(p=>p.polygon),...layout.labels.map(p=>footprint(...p.leader,2)),...inlineBoxes,...inlineLeaders];
  const fontSize=work?18:14,metrics=document.createElement('canvas').getContext('2d');metrics.font=`600 ${fontSize}px ${getComputedStyle(svg).fontFamily}`;
  const items=g.lines.map((line,index)=>{const a=P(line.start),b=P(line.end),id=line.displayId||'L'+(index+1),text=(options.showReferenceIds?id+' · ':'')+fmt(line.dimension??line.length)+(work?' mm':'');return{id,index,a,b,text,width:Math.ceil(metrics.measureText(text).width)+14,height:fontSize+10,angle:readableTextAngle(b[0]-a[0],b[1]-a[1])};});
  const crosses=(a,b,c,d)=>{const u=[b[0]-a[0],b[1]-a[1]],v=[d[0]-c[0],d[1]-c[1]],w=[c[0]-a[0],c[1]-a[1]],det=u[0]*v[1]-u[1]*v[0];if(Math.abs(det)<1e-8)return false;const t=(w[0]*v[1]-w[1]*v[0])/det,q=(w[0]*u[1]-w[1]*u[0])/det;return t>1e-5&&t<1-1e-5&&q>1e-5&&q<1-1e-5;};
@@ -246,7 +247,7 @@ function draw(g,preview,target=$('drawing'),work=false,options={}){
   if(dim.box.x<10||dim.box.y<10||dim.box.x+dim.box.w>width-10||dim.box.y+dim.box.h>pageHeight-10)return false;
   const [start,finish]=dimensionLeader(dim),length=Math.hypot(start[0]-finish[0],start[1]-finish[1]);
   if(length>maxLeader||Math.hypot(start[0]-dim.x,start[1]-dim.y)>maxDistance||leaderCrossesPipe(start,finish,pipe))return false;
-  return !layout.labels.some(p=>hits(start,finish,p.polygon))&&![...prior,...accepted].some(p=>hits(start,finish,p.polygon)||crosses(start,finish,...dimensionLeader(p)))&&!layout.labels.some(p=>crosses(start,finish,...p.leader));
+	  return !layout.labels.some(p=>hits(start,finish,p.polygon))&&!inlineBoxes.some(p=>hits(start,finish,p))&&![...prior,...accepted].some(p=>hits(start,finish,p.polygon)||crosses(start,finish,...dimensionLeader(p)))&&!layout.labels.some(p=>crosses(start,finish,...p.leader));
  };
  const dimensionBounds={x:12,y:12,w:width-24,h:pageHeight-24},dimensionFootprint=dim=>[footprint(...dimensionLeader(dim),2)];
  const primary=placeDimensionLabels(items,obstacles,dimensionBounds,{allowOmissions:true,acceptCandidate:dimensionFits(work?64:42,work?100:66),extraObstacles:dimensionFootprint}).map(dim=>({...dim,leader:dimensionLeader(dim)}));
@@ -272,12 +273,12 @@ function draw(g,preview,target=$('drawing'),work=false,options={}){
   el('title',{},badge).textContent=accessible+' · '+t(arc.turn>0?'Venstre':'Højre');
   if(!work)makeEditable(badge,'angle',ref.index);
  }
-	const placedSpecial=new Set(layout.labels.map(label=>label.index));
 	for(const ref of layout.anchors){
-	 const arc=g.arcs[ref.index],visual=bendVisual(arc.turn),anchor=el('g',{'data-bend-id':ref.id,'data-bend-anchor':ref.id,'data-bend-code':visual.key,class:'bend-anchor'},labels);
+	 const arc=g.arcs[ref.index],visual=bendVisual(arc.turn),accessible=bendAccessibleLabel(ref.id,arc.turn,{format:fmtAngle,special:t('SPECIAL')}),anchor=el('g',{'data-bend-id':ref.id,'data-bend-anchor':ref.id,'data-bend-code':visual.key,class:'bend-anchor','aria-label':accessible},labels);
   if(!work)el('circle',{cx:ref.x,cy:ref.y,r:10,fill:'transparent'},anchor);
-	 const offset=work?13:10,x=ref.x+(ref.outward?.[0]||0)*offset,y=ref.y+(ref.outward?.[1]||0)*offset;if(visual.standard||!placedSpecial.has(ref.index)){const text=el('text',{'data-bend-inline-label':ref.id,x,y:y+(work?4.5:3.5),'text-anchor':'middle','font-family':'var(--app-font, sans-serif)','font-size':visual.standard?(work?13:10):(work?12:9.5),'font-weight':800,fill:visual.text,'paint-order':'stroke',stroke:'#fff','stroke-width':work?4:3,'stroke-linejoin':'round'},anchor);text.textContent=visual.standard?ref.id:ref.id+' · '+t('SPECIAL')+' '+fmtAngle(Math.abs(arc.turn))+'°';}else el('circle',{'data-bend':ref.id,cx:ref.x,cy:ref.y,r:3,fill:visual.stroke,stroke:'white','stroke-width':1.2},anchor);
-  el('title',{},anchor).textContent=bendAccessibleLabel(ref.id,arc.turn,{format:fmtAngle,special:t('SPECIAL')});
+		 const {inlineText,fontSize,paintStroke,placement}=inlineBends.get(ref.index);
+	 if(inlineText&&placement?.visible){const [start,finish]=placement.leader;el('line',{'data-bend-inline-leader':ref.id,x1:start[0],y1:start[1],x2:finish[0],y2:finish[1],stroke:visual.stroke,'stroke-width':work?1.2:1,'pointer-events':'none'},leaders);anchor.setAttribute('data-bend-label-x',placement.x);anchor.setAttribute('data-bend-label-y',placement.y);anchor.setAttribute('data-bend-label-box',`${placement.box.x} ${placement.box.y} ${placement.box.width} ${placement.box.height}`);const text=el('text',{'data-bend-inline-label':ref.id,x:placement.x,y:placement.y+fontSize*.34,'text-anchor':'middle','font-family':'var(--app-font, sans-serif)','font-size':fontSize,'font-weight':800,fill:visual.text,'paint-order':'stroke',stroke:'#fff','stroke-width':paintStroke,'stroke-linejoin':'round'},anchor);text.textContent=inlineText;}else if(!visual.standard&&placedSpecial.has(ref.index))el('circle',{'data-bend':ref.id,cx:ref.x,cy:ref.y,r:3,fill:visual.stroke,stroke:'white','stroke-width':1.2},anchor);
+  el('title',{},anchor).textContent=accessible;
   if(!work)makeEditable(anchor,'angle',ref.index);
  }
  for(const [jointIndex,joint]of joints.entries()){

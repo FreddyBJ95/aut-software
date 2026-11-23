@@ -1,6 +1,6 @@
 # Overdragelse: Pipe-bend
 
-Dato: 22. november 2026.
+Opdateret: 23. november 2026.
 
 Dette dokument er skrevet til den næste Codex-agent. Læs også `README.md`, og kontrollér den aktuelle kode, før du ændrer noget.
 
@@ -8,10 +8,10 @@ Dette dokument er skrevet til den næste Codex-agent. Læs også `README.md`, og
 
 Brugeren ønsker nu at arbejde med hele projektet lokalt på sin computer og lade sin egen Codex-agent overtage. Denne overdragelse er særskilt godkendt til at blive lagt på Git. Fortsæt lokalt; udgiv ikke nye appændringer automatisk uden brugerens ønske. Slet ikke det eksisterende repository eller den offentlige app.
 
-Den aktuelle udgave er **v44**, videreført fra v43-commit `6560436`. Version 44 gør samlingsmarkøren mindre ved oversigtszoom og fremhæver selve den farvede bukkebue i arbejdstegningen. Brugeren bad den 22. november 2026 om at få v44 committed og udgivet fra `main` gennem GitHub Pages-workflowet; kontrollér altid den konkrete Pages-kørsel, før udgivelsen meldes færdig.
+Den aktuelle udgave er **v45**. Version 45 flytter de kompakte B-labels fri af selve bukkebuen og forbinder dem med en kort lederstreg. Brugeren bad den 23. november 2026 om at få ændringen committed og udgivet fra `main`; kontrollér altid den konkrete Pages-kørsel, før udgivelsen meldes færdig. Appen blev samme dag flyttet ind i `aut-software`-monorepoet med commit `8432ae9` og udgives nu fra undermappen `Pipe-bend/`.
 
-- Repository: https://github.com/FreddyBJ95/Pipe-bend
-- Offentlig app: https://freddybj95.github.io/Pipe-bend/
+- Repository: https://github.com/FreddyBJ95/aut-software
+- Offentlig app: https://freddybj95.github.io/aut-software/Pipe-bend/
 - Branch ved overdragelsen: `main`.
 - Programmet er en statisk PWA med almindelig JavaScript og ES-moduler. Der kræves ingen npm-installation eller buildproces.
 - Dansk, norsk og engelsk. Alle geometriske beregninger bruger mm.
@@ -36,6 +36,7 @@ Den aktuelle udgave er **v44**, videreført fra v43-commit `6560436`. Version 44
 16. Buk på 30°/45°/60°/90° er henholdsvis violet/blå/gul-okker/mørkegrøn. Andre vinkler er bordeaux og mærket `SPECIAL`; graden bevares altid som tekst i reference- og bukkedata. Visningsvalget `Rørtegning` er omdøbt til `Automatisk 2D`, fordi det er en automatisk drejet plantilpasning og ikke den faste Ovenfra-projektion.
 17. Fra v43 bæres standardkoden af hele den farvede rørbue. Store B/vinkelbokse vises ikke længere for standardbuk; kun et lille ubokset B-nummer står ved buen. Den præcise grad findes fortsat i referencelister, fladtegninger og tabeller. `SPECIAL` har fortsat en eksplicit tekstlabel, og et valgt standardbuk kan vise detaljekortet i `Ved tryk`-tilstand.
 18. Fra v44 skalerer den synlige samlingsmarkør i live 2D og 3D fra 40 % ved 100 % zoom til fuld størrelse ved 250 % zoom. I oversigten står kun `S1`; tættere på står `S1 · DELING`. Det transparente 44 × 44 px trykområde ændres ikke, og arbejdsvisning/print beholder fuld størrelse. Arbejdstegningens fysiske bukkebue får desuden en diskret farvet fremhævning langs nøjagtig samme SVG-bane, så formen ses tydeligt uden at ændre geometri eller mål.
+19. Fra v45 placeres kompakte B-labels uden for den synlige bukkebue i live 2D, arbejdsvisning, rumlige projektioner og print. Afstanden beregnes ud fra rør-/fremhævningsbredden, tekstens hvide kant og labelens udstrækning; en kort farvet leder peger tilbage på den faktiske bue. Hvis ingen side passer sikkert i viewporten, udelades den kompakte label frem for at dække bukket. Den fulde reference og graden bevares i data, mens geometri og tryk-/redigeringsanker forbliver uændret.
 
 De tre seneste brugerønsker om retningsrækken, lag og mål ved tryk er allerede implementeret og udgivet. Genimplementér dem ikke blot, fordi de er gentaget i samtalehistorikken. Hvis noget fortsat fejler, undersøg den konkrete kørsel, synlighed og indlæste version.
 
@@ -131,10 +132,10 @@ Selve koden og browserens gemte projekter er to forskellige ting.
 - Ældre vægudkast migreres kun, hvis deres geometri passer til projektet. Bevar tombstones og projektidentitet.
 - JSON-eksport kan indeholde det portable `wallDraft`, så vægge, klammer, forhindringer og igangværende arbejde kan følge med.
 - Import validerer før mutation; ugyldige eller for store filer skal bevare det åbne projekt.
-- Browserlager er knyttet til origin. GitHub Pages, `localhost:8123`, `localhost:8080` og `127.0.0.1:8123` er forskellige lagre. Brug samme adresse og port hver gang.
+- Browserlager er knyttet til origin. GitHub Pages, `localhost:8123`, `localhost:8080` og `127.0.0.1:8123` er forskellige lagre. Flytningen mellem stier på samme `freddybj95.github.io`-origin ændrer ikke localStorage, men den nye service worker har scope under `/aut-software/Pipe-bend/`. Brug samme lokale adresse og port hver gang.
 - Brug **Gem projekt** i den gamle app og **Åbn projekt** i den lokale app for at flytte en tegning. Rens ikke browserdata for at løse et versionsproblem.
 
-Den lokale kopi ved overdragelsen har en startfil og en fast lokal adresse. Fra en almindelig klon kan du også køre følgende fra projektets rod og åbne http://localhost:8123/:
+Kør følgende fra monorepoets rod og åbn http://localhost:8123/Pipe-bend/:
 
 ```sh
 python3 -m http.server 8123 --bind 127.0.0.1
@@ -142,15 +143,16 @@ python3 -m http.server 8123 --bind 127.0.0.1
 
 Åbn ikke bare `index.html` som en `file://`-fil: ES-moduler skal serveres over HTTP.
 
-Den eksisterende Del appen/QR-kode peger fortsat på den offentlige app. Lokale rettelser bliver ikke synlige for kolleger via den gamle QR-kode. En telefon kan ikke åbne computerens `localhost`.
+Del appen-linket, kopifunktionen, native deling og QR-koden peger alle på `https://freddybj95.github.io/aut-software/Pipe-bend/`. QR-billedet blev afkodet og verificeret den 23. november 2026. Lokale rettelser bliver først synlige for kolleger efter udgivelse, og en telefon kan ikke åbne computerens `localhost`.
 
 ## Test og faktisk valideringsniveau
 
-Der er **30** selvstændige Node-testsæt i den lokale v44-arbejdskopi. De består sammen med syntakskontrol af JavaScript og kontrol af alle **56** offlineaktiver.
+Der er **30** selvstændige Node-testsæt i den lokale v45-arbejdskopi. De består sammen med syntakskontrol af JavaScript og kontrol af alle **56** offlineaktiver.
 
-Kør fra projektets rod:
+Kør fra monorepoets rod:
 
 ```sh
+cd Pipe-bend
 node test.mjs
 ```
 
@@ -179,6 +181,8 @@ Version 43 er visuelt kontrolleret i samme browser med 45°/90°/60°/37°: live
 
 Version 44 er visuelt kontrolleret i lokal Chromium med et 5,5 m træk, 3 m rå rør, S1 og et 45°-buk. Ved 100 % viser live-tegningen `S1`, skala 0,4 og uændret 44 × 44 px trykområde; ved 246 % vises `S1 · DELING` næsten i fuld størrelse. Montage- og R2-arbejdstegningen viser en blå fremhævning på nøjagtig samme bane som den fysiske B1-bue, og 3D-arbejdsvisningen beholder både fremhævningen og den fulde samlingsmarkør. Ingen browserfejl eller advarsler blev observeret.
 
+Version 45 er visuelt kontrolleret i den lokale in-app Chromium-browser med et 6,5 m plant træk, 3 m rå rør, S1 samt 45°- og 90°-buk. Ved 100 % står B1/B2 fri af de farvede buer med korte lederstreger i live Automatisk 2D, live 3D-overblik, montageoverblikket og arbejdsvisningens 3D-overblik. Begge bukkebuer er synlige i deres fulde farve, og der blev ikke observeret browserfejl eller advarsler. Længdemålenes layout reserverer desuden de flyttede labelbokse og lederstreger som forhindringer.
+
 Ved nye ændringer bør du prioritere almindelige og rumlige rør, forskellige radier/vinkler, negative/flere højder, forlængelse fra A, smalle skærme og mindst ét tilfælde med sammenfaldende projektioner. Kontrollér faktiske synlige elementer, ikke blot et internt `data-*`-attribut.
 
 ## Hvis brugeren senere ønsker en ny udgivelse
@@ -186,9 +190,9 @@ Ved nye ændringer bør du prioritere almindelige og rumlige rør, forskellige r
 Den eksisterende GitHub Pages-konfiguration kan stadig bruges, men lokal udvikling er nu det seneste ønske.
 
 - Udgiv kun efter en relevant bestilling fra brugeren.
-- Bevar relative stier; appen skal virke både lokalt og under `/Pipe-bend/`.
+- Bevar relative stier; appen skal virke både lokalt og under `/aut-software/Pipe-bend/`.
 - Koordinér versionsquery i HTML/importer og `sw.js`-cache. Nye/ændrede runtime-moduler skal være i offlineaktivlisten med den præcise importsti.
-- Cache- og importversionerne i arbejdskopien er v44. Bevar versionsnummeret samlet i HTML, importer og `sw.js` ved senere appændringer.
+- Cache- og importversionerne i arbejdskopien er v45. Bevar versionsnummeret samlet i HTML, importer og `sw.js` ved senere appændringer.
 - Bevar eksisterende ændringer, undgå force-push, og kontrollér deployment-resultatet, før du melder en ændring udgivet.
 
 ## Anbefalet første skridt for den næste agent
@@ -196,4 +200,4 @@ Den eksisterende GitHub Pages-konfiguration kan stadig bruges, men lokal udvikli
 1. Læs dette dokument og kontrollér projektmappen, dens instruktioner og ændringer.
 2. Start den lokale app og behold den samme lokale adresse fremover.
 3. Kør relevante tests; hvis du arbejder på UI, test også den faktiske synlighed og interaktion i en browser, når en browser er tilgængelig.
-4. Version 44 er implementeret, testet og bestilt udgivet oven på v43. Kontrollér altid Git-status og den seneste GitHub Pages-kørsel, før en senere ændring meldes udgivet.
+4. Version 45 er implementeret, testet og bestilt udgivet fra `main`. Kontrollér altid Git-status og den seneste GitHub Pages-kørsel, før en ændring meldes udgivet.

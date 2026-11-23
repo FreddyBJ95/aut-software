@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
-import {geometry3D,bendOrientation,extendSpatial} from './spatial-geometry.mjs?v=44';
-import {spatialHeightLayers,spatialLayerSelection} from './spatial-layers.mjs?v=44';
+import {geometry3D,bendOrientation,extendSpatial} from './spatial-geometry.mjs?v=45';
+import {spatialHeightLayers,spatialLayerSelection} from './spatial-layers.mjs?v=45';
 
 const close=(a,b)=>assert(Math.abs(a-b)<1e-6,`${a} != ${b}`);
 const pointClose=(a,b)=>a.forEach((value,index)=>close(value,b[index]));

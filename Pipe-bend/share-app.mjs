@@ -1,4 +1,4 @@
-import {t} from './i18n.mjs?v=44';
+import {t} from './i18n.mjs?v=45';
 
 // Share the installed app's public entry point, including from local previews.
 export const APP_URL = 'https://freddybj95.github.io/aut-software/Pipe-bend/';

@@ -19,6 +19,12 @@ Appen ligger i `Pipe-bend/` i repoet `aut-software` og udgives sammen med de and
 
 Appen installeres fra den HTTPS-adresse, GitHub Pages giver dig; en downloadet ZIP alene er ikke en installeret PWA.
 
+## Frie B-labels ved buk (v45)
+
+De små uboksede B-numre ligger ikke længere oven på den farvede bukkebue. Placeringen tager højde for både rørets synlige bredde, den hvide tekstkant og selve labelens størrelse, så bukket fortsat kan ses, når tegningen zoomes ud. En kort farvet streg forbinder nummeret med det præcise punkt på buen.
+
+Samme placering bruges i live 2D, arbejdsvisning, 3D og udskrift. Hvis der ikke er sikker plads inden for tegningen, udelades den kompakte label i stedet for at dække bukket; den fulde reference findes fortsat i lister og bukkedata. Rørets geometri og bukkets tryk-/redigeringspunkt ændres ikke.
+
 ## Mindre samlingsmarkør og tydeligere buk (v44)
 
 I live-tegningen tilpasser samlingsmarkøren sig nu zoomniveauet. Ved 100 % vises en lille delelinje med den kompakte tekst `S1`; når der zoomes ind, vokser markøren gradvist og viser igen `S1 · DELING`. Det usynlige trykområde er fortsat 44 × 44 px, så samlingen er lige så nem at vælge. Arbejdstegning og udskrift bruger altid den fulde markør.

@@ -1,6 +1,6 @@
 // Measured, open wall chains. All lengths are mm, turns are signed degrees,
 // heading is radians. The pipe is checked with its real constant-radius arcs.
-import {buildRouteGeometry,splitRouteCorners,validateRouteSelfCollision,pointSegmentDistance,segmentDistance} from './room-routing.mjs?v=44';
+import {buildRouteGeometry,splitRouteCorners,validateRouteSelfCollision,pointSegmentDistance,segmentDistance} from './room-routing.mjs?v=45';
 
 const EPS=1e-7,CLIP_TOLERANCE=0.25;
 const add=(a,b)=>[a[0]+b[0],a[1]+b[1]],sub=(a,b)=>[a[0]-b[0],a[1]-b[1]],mul=(a,k)=>[a[0]*k,a[1]*k];

@@ -1,15 +1,15 @@
-import {hasSpatialPipe} from './spatial-geometry.mjs?v=44';
-import {generateWallRoute,validateWallRoute,wallLayout,pointOnWall,wallObstaclePolygon} from './wall-routing.mjs?v=44';
-import {layoutLocalWallLabels,wallSegmentFootprint,wallDirectionArrow} from './wall-label-layout.mjs?v=44';
-import {rectPolygon} from './dimension-layout.mjs?v=44';
-import {pipeModelFromPoints} from './wall-pipe-edit.mjs?v=44';
-import {solveWallPipeEdit} from './wall-pipe-solver.mjs?v=44';
-import {buildRouteGeometry} from './room-routing.mjs?v=44';
-import {createWallViewport} from './wall-viewport.mjs?v=44';
-import {geometryToSvgPath,getWallClearanceDimensions} from './wall-detail-geometry.mjs?v=44';
-import {pickPipePart,pickWallSegment} from './wall-picking.mjs?v=44';
-import {setIconButton} from './ui-icons.mjs?v=44';
-import {projectIdentity,projectOpenKey,readWallDraft,writeWallDraft,clearWallDraft} from './project-storage.mjs?v=44';
+import {hasSpatialPipe} from './spatial-geometry.mjs?v=45';
+import {generateWallRoute,validateWallRoute,wallLayout,pointOnWall,wallObstaclePolygon} from './wall-routing.mjs?v=45';
+import {layoutLocalWallLabels,wallSegmentFootprint,wallDirectionArrow} from './wall-label-layout.mjs?v=45';
+import {rectPolygon} from './dimension-layout.mjs?v=45';
+import {pipeModelFromPoints} from './wall-pipe-edit.mjs?v=45';
+import {solveWallPipeEdit} from './wall-pipe-solver.mjs?v=45';
+import {buildRouteGeometry} from './room-routing.mjs?v=45';
+import {createWallViewport} from './wall-viewport.mjs?v=45';
+import {geometryToSvgPath,getWallClearanceDimensions} from './wall-detail-geometry.mjs?v=45';
+import {pickPipePart,pickWallSegment} from './wall-picking.mjs?v=45';
+import {setIconButton} from './ui-icons.mjs?v=45';
+import {projectIdentity,projectOpenKey,readWallDraft,writeWallDraft,clearWallDraft} from './project-storage.mjs?v=45';
 
 const words={
   title:['Tegn vægforløb','Tegn veggforløp','Draw the wall path'],

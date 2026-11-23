@@ -1,9 +1,9 @@
 // Coupled edits of a pipe inside a fixed measured wall chain. Numerical fits
 // only propose candidates; the existing physical validator remains decisive.
-import {validateWallRoute,wallLayout,arcSegmentDistance} from './wall-routing.mjs?v=44';
-import {buildRouteGeometry,pointSegmentDistance,segmentDistance} from './room-routing.mjs?v=44';
-import {pipeModelFromPoints} from './wall-pipe-edit.mjs?v=44';
-import {fitPipeLengths} from './linear-pipe-fit.mjs?v=44';
+import {validateWallRoute,wallLayout,arcSegmentDistance} from './wall-routing.mjs?v=45';
+import {buildRouteGeometry,pointSegmentDistance,segmentDistance} from './room-routing.mjs?v=45';
+import {pipeModelFromPoints} from './wall-pipe-edit.mjs?v=45';
+import {fitPipeLengths} from './linear-pipe-fit.mjs?v=45';
 
 const EPS=1e-7,DEG=Math.PI/180;
 const add=(a,b)=>[a[0]+b[0],a[1]+b[1]],sub=(a,b)=>[a[0]-b[0],a[1]-b[1]],mul=(a,k)=>[a[0]*k,a[1]*k];

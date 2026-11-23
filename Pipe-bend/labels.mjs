@@ -1,4 +1,4 @@
-import {rectPolygon,polygonsOverlap} from './dimension-layout.mjs?v=44';
+import {rectPolygon,polygonsOverlap} from './dimension-layout.mjs?v=45';
 
 const bounds=polygon=>({minX:Math.min(...polygon.map(p=>p[0])),maxX:Math.max(...polygon.map(p=>p[0])),minY:Math.min(...polygon.map(p=>p[1])),maxY:Math.max(...polygon.map(p=>p[1]))});
 const inside=(polygon,width,height,padding)=>polygon.every(([x,y])=>x>=padding&&x<=width-padding&&y>=padding&&y<=height-padding);

@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {geometry,extend} from './geometry.mjs';
 import {convertMeasurementMode} from './measurements.mjs';
-import {geometry3D,extendSpatial,validateSpatialState,hasSpatialPipe,bendOrientation,spatialBendRotations,normalizeSpatialAngle} from './spatial-geometry.mjs?v=44';
+import {geometry3D,extendSpatial,validateSpatialState,hasSpatialPipe,bendOrientation,spatialBendRotations,normalizeSpatialAngle} from './spatial-geometry.mjs?v=45';
 const near=(a,b,epsilon=1e-7)=>assert.ok(Math.abs(a-b)<epsilon,`${a} != ${b}`);
 const pointNear=(a,b)=>a.forEach((v,i)=>near(v,b[i]));
 const dot=(a,b)=>a.reduce((sum,v,i)=>sum+v*b[i],0);

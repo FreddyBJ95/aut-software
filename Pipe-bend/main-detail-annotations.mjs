@@ -1,4 +1,4 @@
-import {rectPolygon,polygonsOverlap} from './dimension-layout.mjs?v=44';
+import {rectPolygon,polygonsOverlap} from './dimension-layout.mjs?v=45';
 
 // Optional engineering details for the ordinary pipe editor. Coordinates and
 // annotation sizes are screen pixels; values remain the physical mm values.

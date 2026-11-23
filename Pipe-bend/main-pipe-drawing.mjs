@@ -1,10 +1,10 @@
-import {createWallViewport} from './wall-viewport.mjs?v=44';
-import {mainPipeToSvgPath,pipeDetailStrokeWidths} from './main-pipe-detail.mjs?v=44';
-import {layoutMainDetailAnnotations} from './main-detail-annotations.mjs?v=44';
-import {placeDimensionLabels} from './dimension-layout.mjs?v=44';
-import {referenceLayout,bestDrawingAngle,readableTextAngle,leaderCrossesPipe} from './labels.mjs?v=44';
-import {bendVisual,bendBadgeLines,bendAccessibleLabel} from './bend-visuals.mjs?v=44';
-import {jointMarkerPresentation} from './joint-visuals.mjs?v=44';
+import {createWallViewport} from './wall-viewport.mjs?v=45';
+import {mainPipeToSvgPath,pipeDetailStrokeWidths} from './main-pipe-detail.mjs?v=45';
+import {layoutMainDetailAnnotations} from './main-detail-annotations.mjs?v=45';
+import {placeDimensionLabels} from './dimension-layout.mjs?v=45';
+import {referenceLayout,bestDrawingAngle,readableTextAngle,leaderCrossesPipe} from './labels.mjs?v=45';
+import {bendVisual,bendBadgeLines,bendAccessibleLabel,bendInlineLabelPlacement} from './bend-visuals.mjs?v=45';
+import {jointMarkerPresentation} from './joint-visuals.mjs?v=45';
 
 const NS='http://www.w3.org/2000/svg';
 const rect=(x,y,w,h)=>[[x,y],[x+w,y],[x+w,y+h],[x,y+h]];
@@ -54,10 +54,17 @@ export function createMainPipeDrawing({svg,zoomIn,zoomOut,fit,output,format=Stri
   for(const line of g.lines){const polygon=footprint(project(line.start),project(line.end),halfWidth);if(nearViewport(polygon))pipe.push({polygon});}
   g.arcs.forEach((arc,index)=>{const sampleAngle=Math.abs(arc.turn)*Math.PI/180/Math.max(1,arc.samples.length-1),step=Math.max(1,Math.min(4,Math.floor(Math.sqrt(4/Math.max(1,settings.radius*scale*density))/sampleAngle)));for(let j=0;j<arc.samples.length-1;j+=step){const next=Math.min(j+step,arc.samples.length-1),bow=settings.radius*scale*density*(1-Math.cos(sampleAngle*(next-j)/2)),polygon=footprint(project(arc.samples[j]),project(arc.samples[next]),halfWidth+bow);if(nearViewport(polygon))pipe.push({index,polygon});}});
   const endpointObstacles=[project(g.start),project(g.end)].filter(p=>inView(p,30)).map(p=>rect(p[0]-23,p[1]-23,46,46));
-  const anchors=g.arcs.map((arc,index)=>{const p=project(arc.samples[Math.floor((arc.samples.length-1)/2)]),centerPoint=arc.center?project(arc.center):p,radial=[p[0]-centerPoint[0],p[1]-centerPoint[1]],radialLength=Math.hypot(...radial)||1,id=arc.displayId||'B'+(index+1),visual=bendVisual(arc.turn);return{type:'angle',index,order:index,x:p[0],y:p[1],tagX:p[0]+radial[0]/radialLength*11,tagY:p[1]+radial[1]/radialLength*11,id,visual,accessible:bendAccessibleLabel(id,arc.turn,{format:formatAngle,special:translate('SPECIAL')})};}).filter(p=>inView([p.x,p.y],2));
+  const anchors=g.arcs.map((arc,index)=>{
+   const p=project(arc.samples[Math.floor((arc.samples.length-1)/2)]),centerPoint=arc.center?project(arc.center):p,radial=[p[0]-centerPoint[0],p[1]-centerPoint[1]],radialLength=Math.hypot(...radial),outward=radialLength?[radial[0]/radialLength,radial[1]/radialLength]:[0,-1],id=arc.displayId||'B'+(index+1),visual=bendVisual(arc.turn),accessible=bendAccessibleLabel(id,arc.turn,{format:formatAngle,special:translate('SPECIAL')});
+   const inline=visual.standard?bendInlineLabelPlacement(p,outward,{text:id,fontSize:10,pipeWidth:Math.max(1.5,stroke.screenWidth),paintStroke:3,width,height,padding:6}):null;
+   return{type:'angle',index,order:index,x:p[0],y:p[1],outward,id,visual,accessible,inline};
+  }).filter(p=>inView([p.x,p.y],2));
   const specialAnchors=anchors.filter(anchor=>!anchor.visual.standard).map(anchor=>({...anchor,labelLines:bendBadgeLines(anchor.id,g.arcs[anchor.index].turn,{format:formatAngle,special:translate('SPECIAL')})}));
   const layout=referenceLayout(specialAnchors,{width,height,fontSize:13,obstacles:endpointObstacles,pipe,maxLeader:28});
-  const obstacles=[...pipe.map(item=>item.polygon),...endpointObstacles,...layout.labels.map(item=>item.polygon),...layout.labels.map(item=>footprint(...item.leader,2))];
+  const placedSpecial=new Set(layout.labels.map(label=>label.index));
+  for(const ref of anchors)if(!ref.visual.standard&&!placedSpecial.has(ref.index)){const text=ref.id+' · '+translate('SPECIAL')+' '+formatAngle(Math.abs(g.arcs[ref.index].turn))+'°';ref.inline=bendInlineLabelPlacement([ref.x,ref.y],ref.outward,{text,fontSize:9.5,pipeWidth:Math.max(1.5,stroke.screenWidth),paintStroke:3,width,height,padding:6});}
+  const inlineObstacles=anchors.flatMap(item=>item.inline?.visible?[rect(item.inline.box.x,item.inline.box.y,item.inline.box.width,item.inline.box.height)]:[]);
+  const obstacles=[...pipe.map(item=>item.polygon),...endpointObstacles,...layout.labels.map(item=>item.polygon),...layout.labels.map(item=>footprint(...item.leader,2)),...inlineObstacles];
   const fontSize=14,metrics=document.createElement('canvas').getContext('2d');metrics.font=`600 ${fontSize}px ${getComputedStyle(svg).fontFamily}`;
   const items=g.lines.flatMap((line,index)=>{const visible=visibleLine(project(line.start),project(line.end),width,height);if(!visible)return[];const [a,b]=visible,text=format(line.dimension??line.length);return[{id:'L'+(index+1),index,a,b,text,width:Math.ceil(metrics.measureText(text).width)+14,height:fontSize+10,angle:readableTextAngle(b[0]-a[0],b[1]-a[1])}];});
   const dimensionLeader=dim=>{const start=[(dim.a[0]+dim.b[0])/2,(dim.a[1]+dim.b[1])/2],dx=start[0]-dim.x,dy=start[1]-dim.y,angle=dim.angle*Math.PI/180,lx=dx*Math.cos(angle)+dy*Math.sin(angle),ly=-dx*Math.sin(angle)+dy*Math.cos(angle),factor=Math.min(1,dim.width/2/Math.max(1e-8,Math.abs(lx)),dim.height/2/Math.max(1e-8,Math.abs(ly)));return[start,[dim.x+dx*factor,dim.y+dy*factor]];};
@@ -83,8 +90,16 @@ export function createMainPipeDrawing({svg,zoomIn,zoomOut,fit,output,format=Stri
    const badge=node('g',{'data-reference':ref.id,'data-bend-id':ref.id,'data-bend-code':visual.key,'data-bend-kind':visual.standard?'standard':'special','data-focus-key':ref.id,class:'reference-badge','aria-label':accessible},labels),box={x:ref.labelX-ref.width/2,y:ref.labelY-ref.height/2,width:ref.width,height:ref.height,rx:Math.min(12,ref.height/2),fill:visual.fill,stroke:visual.stroke,'stroke-width':visual.standard?1.2:1.8};if(visual.dash)box['stroke-dasharray']=visual.dash;node('rect',box,badge);
    const lineHeight=ref.fontSize*1.05,first=ref.labelY-(ref.labelLines.length-1)*lineHeight/2+ref.fontSize*.34;ref.labelLines.forEach((text,index)=>node('text',{x:ref.labelX,y:first+index*lineHeight,'font-family':'var(--app-font, sans-serif)','font-size':index?ref.fontSize*.88:ref.fontSize,'font-weight':index?600:700,'text-anchor':'middle',fill:visual.text},badge,text));node('title',{},badge,accessible);editable(badge,'angle',ref.index);
   }
-  const placedSpecial=new Set(layout.labels.map(label=>label.index));
-  for(const ref of anchors){const {visual,accessible}=ref,anchor=node('g',{'data-bend-id':ref.id,'data-bend-anchor':ref.id,'data-focus-key':'anchor:'+ref.id,'data-bend-code':visual.key,class:'bend-anchor','aria-label':accessible},labels);node('circle',{cx:ref.x,cy:ref.y,r:18,fill:'transparent'},anchor);if(visual.standard)node('text',{'data-bend-inline-label':ref.id,x:ref.tagX,y:ref.tagY+3.5,'text-anchor':'middle','font-family':'var(--app-font, sans-serif)','font-size':10,'font-weight':800,fill:visual.text,'paint-order':'stroke',stroke:'#fff','stroke-width':3,'stroke-linejoin':'round'},anchor,ref.id);else if(!placedSpecial.has(ref.index))node('text',{'data-bend-inline-label':ref.id,x:ref.tagX,y:ref.tagY+3.5,'text-anchor':'middle','font-family':'var(--app-font, sans-serif)','font-size':9.5,'font-weight':800,fill:visual.text,'paint-order':'stroke',stroke:'#fff','stroke-width':3,'stroke-linejoin':'round'},anchor,ref.id+' · '+translate('SPECIAL')+' '+formatAngle(Math.abs(g.arcs[ref.index].turn))+'°');else node('circle',{'data-bend':ref.id,cx:ref.x,cy:ref.y,r:3,fill:visual.stroke,stroke:'#fff','stroke-width':1.2},anchor);node('title',{},anchor,accessible);editable(anchor,'angle',ref.index);}
+  for(const ref of anchors){
+   const {visual,accessible}=ref,anchor=node('g',{'data-bend-id':ref.id,'data-bend-anchor':ref.id,'data-focus-key':'anchor:'+ref.id,'data-bend-code':visual.key,class:'bend-anchor','aria-label':accessible},labels);node('circle',{cx:ref.x,cy:ref.y,r:18,fill:'transparent'},anchor);
+   const inlineText=visual.standard?ref.id:placedSpecial.has(ref.index)?null:ref.id+' · '+translate('SPECIAL')+' '+formatAngle(Math.abs(g.arcs[ref.index].turn))+'°',fontSize=visual.standard?10:9.5,placement=ref.inline;
+   if(inlineText&&placement?.visible){
+    const [start,finish]=placement.leader;node('line',{'data-bend-inline-leader':ref.id,x1:start[0],y1:start[1],x2:finish[0],y2:finish[1],stroke:visual.stroke,'stroke-width':1,'pointer-events':'none'},leaders);
+    anchor.setAttribute('data-bend-label-x',placement.x);anchor.setAttribute('data-bend-label-y',placement.y);anchor.setAttribute('data-bend-label-box',`${placement.box.x} ${placement.box.y} ${placement.box.width} ${placement.box.height}`);
+    node('text',{'data-bend-inline-label':ref.id,x:placement.x,y:placement.y+fontSize*.34,'text-anchor':'middle','font-family':'var(--app-font, sans-serif)','font-size':fontSize,'font-weight':800,fill:visual.text,'paint-order':'stroke',stroke:'#fff','stroke-width':3,'stroke-linejoin':'round'},anchor,inlineText);
+   }else if(!visual.standard&&placedSpecial.has(ref.index))node('circle',{'data-bend':ref.id,cx:ref.x,cy:ref.y,r:3,fill:visual.stroke,stroke:'#fff','stroke-width':1.2},anchor);
+   node('title',{},anchor,accessible);editable(anchor,'angle',ref.index);
+  }
   for(const [jointIndex,joint]of (settings.joints||[]).entries()){
    const line=g.lines[joint.lineIndex];if(!line)continue;
    const fraction=joint.distance/line.length,world=line.start.map((value,index)=>value+(line.end[index]-value)*fraction),point=project(world);if(!inView(point,72))continue;
