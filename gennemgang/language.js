@@ -27,6 +27,7 @@ const translations = new Map([
   ['Registrér fejl','Registrer feil','Log issue'],
   ['Billeder','Bilder','Photos'],
   ['Nærbillede af fejlen','Nærbilde av feilen','Close-up of the issue'],
+  ['Oversigt','Oversikt','Context'],
   ['Oversigtsbillede','Oversiktsbilde','Context photo'],
   ['Valgt nærbillede','Valgt nærbilde','Selected close-up'],
   ['Valgt oversigtsbillede','Valgt oversiktsbilde','Selected context photo'],

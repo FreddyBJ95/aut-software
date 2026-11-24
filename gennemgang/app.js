@@ -309,7 +309,7 @@ byId('report-button').onclick = run(async () => {
     ];
     for (const [label, value] of fields) {
       if (!value) continue;
-      const field = element('div');
+      const field = element('div', '', details.children.length >= 3 ? 'report-detail-wide' : '');
       field.append(element('dt', t(label)), element('dd', value));
       details.append(field);
     }
@@ -319,7 +319,7 @@ byId('report-button').onclick = run(async () => {
     if (issue.comment) notes.append(element('h3', t('Kommentar')), element('p', issue.comment, 'comment'));
     if (notes.childNodes.length) card.append(notes);
     const gallery = element('div', '', 'grid photos');
-    for (const [key, caption] of [['wide', 'Oversigtsbillede'], ['close', 'Nærbillede af fejlen']]) {
+    for (const [key, caption] of [['wide', 'Oversigt'], ['close', 'Nærbillede']]) {
       const figure = element('figure');
       const img = element('img');
       img.alt = t(caption);

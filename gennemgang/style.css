@@ -4,35 +4,64 @@
 .language{display:flex;align-items:center;gap:8px}.language select{font-size:.9rem;padding:7px;width:auto}.bar a{line-height:1.1}.bar{gap:10px}#brand{font-weight:750}
 .location-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.location-fields label{display:grid;grid-template-columns:max-content minmax(0,1fr);align-items:center;gap:10px}.location-fields select{min-height:44px}@media(max-width:540px){.location-fields{grid-template-columns:1fr;gap:0}.location-fields label{grid-template-columns:6.5rem minmax(0,1fr)}}
 
+
 .report-issue {
-  background: #fff;
-  color: #192932;
-  border: 1px solid #bac7cc;
-  border-top: 6px solid #304854;
-  padding: clamp(14px, 3vw, 28px);
-  margin-bottom: 20px;
-  overflow-wrap: anywhere;
+  --report-ink:#203541;
+  --report-line:#d7e0e4;
+  background:#fff;
+  color:var(--report-ink);
+  border:1px solid var(--report-line);
+  border-top:4px solid #315565;
+  padding:clamp(14px, 4vw, 30px);
+  margin-bottom:20px;
+  border-radius:8px;
+  overflow-wrap:anywhere;
 }
-.report-header { display:flex; justify-content:space-between; align-items:center; gap:16px; padding-bottom:14px; border-bottom:2px solid #304854; }
-.report-header h2 { margin:4px 0 0; font-size:clamp(1.25rem, 3vw, 1.75rem); }
+.report-header {
+  display:flex; justify-content:space-between; align-items:center;
+  gap:12px; padding-bottom:14px; border-bottom:1px solid var(--report-line);
+}
+.report-header h2 { margin:4px 0 0; font-size:clamp(1.5rem, 4vw, 2rem); line-height:1.15; }
 .report-header .logo { width:auto; max-height:64px; margin:0; }
-.report-label, .report-details dt, .report-issue figcaption, .report-notes h3 { text-transform:uppercase; letter-spacing:.05em; font-weight:750; font-size:.84rem; }
-.report-label { color:#594525; margin:0; }
-.report-details { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1px; background:#bac7cc; border:1px solid #bac7cc; margin:16px 0; }
-.report-details div { padding:9px; background:#eef2f3; }
-.report-details dd { margin:4px 0 0; font-weight:650; }
-.report-notes { border-left:3px solid #977344; padding-left:10px; margin-bottom:16px; }
-.report-notes h3, .report-notes p { margin:0 0 6px; }
-.report-issue figure { border:1px solid #bac7cc; padding:8px; break-inside:avoid; }
-.report-issue .photos img { display:block; height:clamp(140px, 33vw, 300px); border-radius:0; background:#eef2f3; }
-.report-footer { display:flex; justify-content:space-between; border-top:1px solid #bac7cc; margin-top:14px; padding-top:8px; }
-@media screen and (max-width:540px) { .report-details { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+.report-label, .report-details dt, .report-notes h3 {
+  font-size:.875rem; font-weight:700; color:#46606d;
+}
+.report-label { margin:0; }
+.report-details {
+  display:grid; grid-template-columns:1.3fr 1fr 1fr; gap:1px;
+  margin:14px 0; border:1px solid var(--report-line); border-radius:6px;
+  background:var(--report-line); overflow:hidden;
+}
+.report-details div { min-width:0; padding:9px; background:#f2f6f8; }
+.report-details .report-detail-wide { grid-column:1 / -1; }
+.report-details dd { margin:3px 0 0; font-weight:700; font-variant-numeric:tabular-nums; }
+.report-notes { margin:14px 0; padding:0 0 0 11px; border-left:3px solid #ad824b; }
+.report-notes h3 { margin:0 0 3px; }
+.report-notes p { margin:0 0 10px; }
+.report-notes p:last-child { margin-bottom:0; }
+.report-issue .photos { gap:8px; }
+.report-issue figure {
+  display:flex; flex-direction:column; overflow:hidden;
+  border:1px solid var(--report-line); border-radius:6px; break-inside:avoid;
+}
+.report-issue figcaption {
+  margin:0; padding:7px 8px; font-size:.875rem; font-weight:700;
+  background:#edf3f6;
+}
+.report-issue .photos img {
+  display:block; height:clamp(155px, 53vw, 360px); max-height:none;
+  border-radius:0; background:#e6edf0;
+}
+.report-footer {
+  display:flex; justify-content:space-between; gap:12px; border-top:1px solid var(--report-line);
+  margin-top:14px; padding-top:8px; font-size:.875rem; color:#46606d;
+}
 @page { size:A4; margin:12mm; }
 @media print {
   body { background:#fff; }
   body:has(#report:not([hidden])) header, .report-actions, #notice { display:none!important; }
   main { max-width:none; padding:0; }
-  .report-issue { margin:0; padding:5mm; font-size:10pt; print-color-adjust:exact; -webkit-print-color-adjust:exact; }
+  .report-issue { margin:0; padding:5mm; font-size:10pt; border-radius:0; print-color-adjust:exact; -webkit-print-color-adjust:exact; }
   .report-issue + .report-issue { break-before:page; }
   .report-header, .report-details, .report-issue .photos, .report-footer { break-inside:avoid; }
   .report-header h2 { font-size:18pt; }
