@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#142522">
+<link rel="manifest" href="app.webmanifest"><link rel="apple-touch-icon" href="icon-192.png">
+<link rel="stylesheet" href="style.css"><script defer src="language.js"></script><script defer src="app.js"></script>
+<title>Anlægsgennemgang</title>
+</head>
+<body>
+<header><div class="bar"><a href="./"><img src="icon-192.png" alt=""> Anlægsgennemgang</a><div class="language"><span id="network" hidden>Offline</span><select id="language" aria-label="Language"><option value="da">Dansk</option><option value="nb">Norsk</option><option value="en">English</option></select></div></div></header>
+<main>
+<p id="notice" role="status"></p>
+<section id="home">
+<div class="heading"><h1>Projekter</h1><button id="new-project">＋ Nyt projekt</button></div>
+<div id="projects" class="list"></div>
+</section>
+<section id="project" hidden>
+<button class="secondary" id="back">Alle projekter</button>
+<div class="heading"><h1 id="project-name"></h1><button id="new-issue">＋ Registrér fejl</button></div>
+<details class="panel"><summary>Firmalogo til rapporten</summary>
+<form id="branding"><label>Upload logo <input name="logo" type="file" accept="image/*" required></label>
+<img id="logo-preview" class="logo" alt="Firmalogo" hidden>
+<button>Gem firmalogo</button></form></details>
+<div class="heading"><h2>Registrerede fejl</h2><button class="secondary" id="report-button">Åbn fejlrapport</button></div>
+<div id="issues" class="list"></div>
+</section>
+<section id="create" hidden>
+<button class="secondary cancel">Annullér</button><h1>Nyt projekt</h1>
+<form class="panel" id="project-form">
+<label>Bygning eller proces <input name="name" required placeholder="Fx Neutraliseringsanlæg" maxlength="120"></label>
+<button>Opret projekt</button></form>
+</section>
+<section id="register" hidden>
+<button class="secondary cancel">Annullér</button><h1>Registrér fejl</h1>
+<form id="issue-form">
+<div class="panel"><h2>Billeder</h2><div class="grid">
+<label class="photo">Nærbillede af fejlen <input name="close" type="file" accept="image/*" required><img alt="Valgt nærbillede" hidden></label>
+<label class="photo">Oversigtsbillede <input name="wide" type="file" accept="image/*" required><img alt="Valgt oversigtsbillede" hidden></label>
+</div></div>
+<div class="panel"><h2>Placering</h2><div class="location-fields">
+<label>Etage <select name="floor" required></select></label>
+<label>Søjle <input name="column" required maxlength="60" placeholder="Fx A12" autocapitalize="characters"></label>
+</div><label>Maskine i nærheden <input name="landmark" placeholder="Fx ved pumpe P-201, på siden mod trappen" maxlength="180"></label></div>
+<div class="panel"><h2>Fejltyper</h2><div id="types" class="types"></div>
+<label>Ny fejltype <input id="type-input" placeholder="Fx Mangler blindprop" maxlength="100"></label>
+<button type="button" class="secondary" id="add-type">Tilføj fejltype</button>
+<label>Kommentar <textarea name="comment" rows="3" placeholder="Beskriv fejlene ved placeringen"></textarea></label>
+</div><button class="save">Gem registrering</button>
+</form>
+</section>
+<section id="report" hidden>
+<div class="heading report-actions"><button id="report-back" class="secondary">Tilbage til projekt</button><button id="print">Print / gem som PDF</button></div>
+<div id="report-content"></div>
+</section>
+</main>
+</body></html>
