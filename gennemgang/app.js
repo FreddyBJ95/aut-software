@@ -283,24 +283,41 @@ byId('report-button').onclick = run(async () => {
   const issues = await transaction(db, ['issues'], 'readonly', tx => tx.objectStore('issues').index('projectId').getAll(project.id));
   clearReport();
   const content = byId('report-content');
-  const cover = element('div', '', 'report-cover');
-  const title = element('div');
-  title.append(element('h1', t('Fejlrapport')), element('h2', project.name), element('p', new Intl.DateTimeFormat(language).format(new Date()) + ' · ' + issues.length + ' ' + t('registrerede fejl')));
-  cover.append(title);
-  if (project.logo) {
-    const logo = element('img', '', 'logo');
-    logo.alt = t('Firmalogo');
-    picture(logo, project.logo);
-    cover.append(logo);
-  }
-  content.append(cover);
-  for (const issue of issues.sort((a,b) => a.created - b.created)) {
-    const card = element('article', '', 'panel report-issue');
-    card.append(element('h2', issueTitle(issue)));
-    if (issue.landmark) card.append(element('p', t('Maskine i nærheden') + ' — ' + issue.landmark));
-    if (issue.equipmentTag) card.append(element('p', t('Skabs- eller følertag') + ' — ' + issue.equipmentTag));
-    if (issue.types.length) card.append(element('p', issue.types.map(typeLabel).join(' · ')));
-    if (issue.comment) card.append(element('p', issue.comment, 'comment'));
+  const orderedIssues = issues.sort((a, b) => a.created - b.created);
+  const formatter = new Intl.DateTimeFormat(language);
+  for (const [index, issue] of orderedIssues.entries()) {
+    const card = element('article', '', 'report-issue');
+    const header = element('div', '', 'report-header');
+    const title = element('div');
+    title.append(element('p', t('Fejlrapport'), 'report-label'), element('h2', project.name));
+    header.append(title);
+    if (project.logo) {
+      const logo = element('img', '', 'logo');
+      logo.alt = t('Firmalogo');
+      picture(logo, project.logo);
+      header.append(logo);
+    }
+    card.append(header);
+
+    const details = element('dl', '', 'report-details');
+    const fields = [
+      ['Fejl', issue.id.slice(0, 8).toUpperCase()],
+      ['Etage', issue.floor],
+      ['Søjle', issue.column],
+      ['Maskine i nærheden', issue.landmark],
+      ['Skabs- eller følertag', issue.equipmentTag]
+    ];
+    for (const [label, value] of fields) {
+      if (!value) continue;
+      const field = element('div');
+      field.append(element('dt', t(label)), element('dd', value));
+      details.append(field);
+    }
+    card.append(details);
+    const notes = element('div', '', 'report-notes');
+    if (issue.types.length) notes.append(element('h3', t('Fejltyper')), element('p', issue.types.map(typeLabel).join(' · ')));
+    if (issue.comment) notes.append(element('h3', t('Kommentar')), element('p', issue.comment, 'comment'));
+    if (notes.childNodes.length) card.append(notes);
     const gallery = element('div', '', 'grid photos');
     for (const [key, caption] of [['wide', 'Oversigtsbillede'], ['close', 'Nærbillede af fejlen']]) {
       const figure = element('figure');
@@ -310,7 +327,9 @@ byId('report-button').onclick = run(async () => {
       figure.append(element('figcaption', t(caption)), img);
       gallery.append(figure);
     }
-    card.append(gallery);
+    const footer = element('div', '', 'report-footer');
+    footer.append(element('span', formatter.format(new Date(issue.created))), element('span', (index + 1) + ' / ' + orderedIssues.length));
+    card.append(gallery, footer);
     content.append(card);
   }
   show('report');

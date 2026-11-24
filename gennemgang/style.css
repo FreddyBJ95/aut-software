@@ -1,7 +1,40 @@
 :root{font-family:system-ui,sans-serif;color:#142522;background:#edf1ee;--line:#d3ded7;--green:#145843}
 *{box-sizing:border-box}body{margin:0}header{background:#142522;color:#fff}.bar{max-width:960px;margin:auto;padding:14px 24px;display:flex;align-items:center;justify-content:space-between}.bar a{color:inherit;text-decoration:none;display:flex;align-items:center;gap:10px;font-weight:750}.bar img{width:34px;height:34px}.bar span{color:#ffdc9e}main{max-width:960px;margin:auto;padding:22px 24px 52px}.heading{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:10px 0 20px}h1{font-size:clamp(2rem,6vw,3.25rem);line-height:1.05;margin:16px 0;overflow-wrap:anywhere;letter-spacing:-.045em}h2{font-size:1.2rem;margin:0 0 14px}.panel,.card,.empty{background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px;margin-bottom:14px}.list{display:grid;gap:12px}.list>*{margin:0}.card{text-align:left;color:inherit;width:100%;overflow-wrap:anywhere}.card strong{font-size:1.15rem;display:block}.muted,.empty{color:#496057}.card small{display:block;color:#496057;font-size:.92rem;margin-top:4px}button,input,select,textarea{font:inherit}button{cursor:pointer;background:var(--green);color:#fff;border:1px solid transparent;border-radius:9px;padding:11px 15px;font-weight:700;min-height:44px}button:disabled{opacity:.6;cursor:wait}.secondary{background:#fff;border-color:var(--line);color:#164c3d}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}label{display:grid;gap:7px;font-weight:650;margin:0 0 14px}input,select,textarea{min-width:0;width:100%;padding:10px;border:1px solid #acbdb3;border-radius:8px;color:inherit;background:#fbfdfb}textarea{resize:vertical}summary{cursor:pointer;font-weight:700}details form{margin-top:16px}.types{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:16px}.types label{display:flex;align-items:center;gap:7px;border:1px solid var(--line);border-radius:20px;padding:8px 12px;margin:0}.types label:has(:checked){background:#def0e5;border-color:#39856a}.types input{width:auto;accent-color:var(--green)}#add-type{margin:0 0 14px}.photo img,.photos img{width:100%;max-height:300px;object-fit:contain;background:#edf1ee;border-radius:8px}.photo input{padding:8px 3px}.photos figure{margin:0}.photos figcaption{margin-bottom:5px}.save{width:100%}#notice:empty,[hidden]{display:none!important}#notice{background:#fff4d7;padding:12px;border-radius:8px}.comment{white-space:pre-wrap;overflow-wrap:anywhere}:focus-visible{outline:3px solid #bf791a;outline-offset:2px}@media(max-width:500px){main,.bar{padding-left:14px;padding-right:14px}.panel,.card,.empty{padding:14px}.photo input{font-size:.87rem}}
-.logo{display:block;max-width:min(190px,35%);max-height:90px;object-fit:contain;margin-bottom:12px}.report-cover{display:flex;align-items:center;justify-content:space-between;gap:16px;overflow-wrap:anywhere;margin-bottom:18px}.report-issue h2{overflow-wrap:anywhere}.report-issue figure{break-inside:avoid}.report-issue p{margin:.55em 0}
-@page{size:A4;margin:14mm}
-@media print{body{background:#fff;color:#000}body:has(#report:not([hidden])) header,.report-actions,#notice{display:none!important}main{max-width:none;padding:0}.report-cover{break-after:avoid}.report-cover h1{font-size:25pt;margin-top:0}.report-issue{break-inside:avoid;border:1px solid #999;padding:10px}.report-issue h2{font-size:13pt}.report-issue .photos img{max-height:64mm;background:#fff}.report-issue .photos figcaption{font-size:10pt}}
+.logo{display:block;max-width:min(190px,35%);max-height:90px;object-fit:contain;margin-bottom:12px}
 .language{display:flex;align-items:center;gap:8px}.language select{font-size:.9rem;padding:7px;width:auto}.bar a{line-height:1.1}.bar{gap:10px}#brand{font-weight:750}
 .location-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.location-fields label{display:grid;grid-template-columns:max-content minmax(0,1fr);align-items:center;gap:10px}.location-fields select{min-height:44px}@media(max-width:540px){.location-fields{grid-template-columns:1fr;gap:0}.location-fields label{grid-template-columns:6.5rem minmax(0,1fr)}}
+
+.report-issue {
+  background: #fff;
+  color: #192932;
+  border: 1px solid #bac7cc;
+  border-top: 6px solid #304854;
+  padding: clamp(14px, 3vw, 28px);
+  margin-bottom: 20px;
+  overflow-wrap: anywhere;
+}
+.report-header { display:flex; justify-content:space-between; align-items:center; gap:16px; padding-bottom:14px; border-bottom:2px solid #304854; }
+.report-header h2 { margin:4px 0 0; font-size:clamp(1.25rem, 3vw, 1.75rem); }
+.report-header .logo { width:auto; max-height:64px; margin:0; }
+.report-label, .report-details dt, .report-issue figcaption, .report-notes h3 { text-transform:uppercase; letter-spacing:.05em; font-weight:750; font-size:.84rem; }
+.report-label { color:#594525; margin:0; }
+.report-details { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1px; background:#bac7cc; border:1px solid #bac7cc; margin:16px 0; }
+.report-details div { padding:9px; background:#eef2f3; }
+.report-details dd { margin:4px 0 0; font-weight:650; }
+.report-notes { border-left:3px solid #977344; padding-left:10px; margin-bottom:16px; }
+.report-notes h3, .report-notes p { margin:0 0 6px; }
+.report-issue figure { border:1px solid #bac7cc; padding:8px; break-inside:avoid; }
+.report-issue .photos img { display:block; height:clamp(140px, 33vw, 300px); border-radius:0; background:#eef2f3; }
+.report-footer { display:flex; justify-content:space-between; border-top:1px solid #bac7cc; margin-top:14px; padding-top:8px; }
+@media screen and (max-width:540px) { .report-details { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+@page { size:A4; margin:12mm; }
+@media print {
+  body { background:#fff; }
+  body:has(#report:not([hidden])) header, .report-actions, #notice { display:none!important; }
+  main { max-width:none; padding:0; }
+  .report-issue { margin:0; padding:5mm; font-size:10pt; print-color-adjust:exact; -webkit-print-color-adjust:exact; }
+  .report-issue + .report-issue { break-before:page; }
+  .report-header, .report-details, .report-issue .photos, .report-footer { break-inside:avoid; }
+  .report-header h2 { font-size:18pt; }
+  .report-issue .photos img { height:95mm; }
+}
