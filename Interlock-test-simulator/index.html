@@ -8,7 +8,7 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icons/icon-192.png" type="image/png">
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
-  <link rel="stylesheet" href="styles.css?v=4">
+  <link rel="stylesheet" href="styles.css?v=5">
   <title>Interlock Test Simulator</title>
 </head>
 <body>
@@ -45,13 +45,13 @@
           <label>Beskrivelse<input id="description" value="Tryktransmitter" autocomplete="off"></label>
           <label>Placering<input id="location" value="Proceslinje 1" autocomplete="off"></label>
           <label>Signaltype<select id="signalType"><option value="4-20mA">4–20 mA</option><option value="0-20mA">0–20 mA</option><option value="0-10V">0–10 V</option><option value="2-10V">2–10 V</option><option value="digital-no">Digital NO</option><option value="digital-nc">Digital NC</option></select></label>
-          <label>Procesminimum<input id="processMin" type="number" step="any" value="0"></label>
-          <label>Procesmaksimum<input id="processMax" type="number" step="any" value="10"></label>
-          <label>Enhed<input id="unit" value="bar" autocomplete="off"></label>
-          <label>PLC råminimum<input id="rawMin" type="number" step="1" value="0"></label>
-          <label>PLC råmaksimum<input id="rawMax" type="number" step="1" value="27648"></label>
-          <label>Normalt min. <span class="optional">valgfrit</span><input id="normalMin" type="number" step="any" value="2"></label>
-          <label>Normalt maks. <span class="optional">valgfrit</span><input id="normalMax" type="number" step="any" value="8"></label>
+          <label data-analog-profile>Procesminimum<input id="processMin" type="number" step="any" value="0"></label>
+          <label data-analog-profile>Procesmaksimum<input id="processMax" type="number" step="any" value="10"></label>
+          <label data-analog-profile>Enhed<input id="unit" value="bar" autocomplete="off"></label>
+          <label data-analog-profile>PLC råminimum<input id="rawMin" type="number" step="1" value="0"></label>
+          <label data-analog-profile>PLC råmaksimum<input id="rawMax" type="number" step="1" value="27648"></label>
+          <label data-analog-profile>Normalt min. <span class="optional">valgfrit</span><input id="normalMin" type="number" step="any" value="2"></label>
+          <label data-analog-profile>Normalt maks. <span class="optional">valgfrit</span><input id="normalMax" type="number" step="any" value="8"></label>
           <label class="wide">Kommentar <span class="optional">valgfrit</span><textarea id="instrumentComment" rows="2" placeholder="Kalibrerings- eller projektbemærkning"></textarea></label>
         </div>
       </form>
@@ -61,16 +61,16 @@
         <div class="form-grid">
           <label>Interlock-tag<input id="interlockTag" value="PSHH-101" autocomplete="off"></label>
           <label>Niveau<select id="level"><option>HH</option><option>H</option><option>L</option><option>LL</option></select></label>
-          <label>Retning<select id="direction"><option value="rising">Stigende</option><option value="falling">Faldende</option></select></label>
-          <label>Tripgrænse<input id="tripValue" type="number" step="any" value="9"></label>
-          <label>Resetgrænse<input id="resetValue" type="number" step="any" value="8.5"></label>
+          <label>Retning<select id="direction"><option value="rising">Stigende</option><option value="falling">Faldende</option></select><small id="digitalDirectionHint" class="hidden">Stigende: trip ved aktivering. Faldende: trip ved deaktivering.</small></label>
+          <label data-analog-profile>Tripgrænse<input id="tripValue" type="number" step="any" value="9"></label>
+          <label data-analog-profile>Resetgrænse<input id="resetValue" type="number" step="any" value="8.5"></label>
           <label>Forsinkelse (sek.)<input id="delaySeconds" type="number" min="0" step="any" value="2"></label>
           <label>Resettype<select id="resetMode"><option value="manual">Manuel</option><option value="automatic">Automatisk</option></select></label>
-          <label>Afstand omkring grænse (% span)<input id="testDelta" type="number" min="0.1" step="0.1" value="1"></label>
+          <label data-analog-profile>Afstand omkring grænse (% span)<input id="testDelta" type="number" min="0.1" step="any" value="1"></label>
           <label class="wide">Forventet alarm<input id="expectedAlarm" value="Højt tryk — HH alarm" autocomplete="off"></label>
           <label class="wide">Forventede handlinger<textarea id="expectedActions" rows="2">Stop P-101, luk XV-101, blokér genstart</textarea></label>
         </div>
-        <div class="form-footer"><p>Ændringer her regenererer først testpunkterne, når du trykker på knappen.</p><button type="button" id="generateBtn" class="button button-primary">Generér testsekvens</button></div>
+        <div class="form-footer"><p id="profileFeedback" role="status">Ændringer her regenererer først testpunkterne, når du trykker på knappen.</p><button type="button" id="generateBtn" class="button button-primary">Generér testsekvens</button></div>
       </form>
     </section>
 
@@ -80,18 +80,23 @@
         <div class="instrument-pill"><b id="simTag">PT-101</b><span id="simInterlock">PSHH-101 · HH</span></div>
       </div>
       <div class="sim-layout">
-        <div class="panel hero-panel">
+        <div class="panel hero-panel" data-analog-simulator>
           <p class="panel-label">Procesværdi</p>
           <div class="hero-input"><input id="processValue" type="number" step="any" value="9" aria-label="Procesværdi"><span id="heroUnit">bar</span></div>
           <input id="processSlider" type="range" min="0" max="10" step="0.01" value="9" aria-label="Procesværdi, skyder">
           <div class="range-labels"><span id="rangeMin">0 bar</span><span id="rangeMax">10 bar</span></div>
           <div class="trip-marker"><span>Trip</span><b id="tripMarkerText">9,00 bar</b></div>
         </div>
+        <div id="digitalSimulator" class="panel hero-panel hidden">
+          <label for="actuationValue" class="panel-label">Aktivering</label>
+          <select id="actuationValue"><option value="0">Inaktiv</option><option value="1">Aktiv</option></select>
+        </div>
         <div class="metric-grid">
-          <label class="metric-card accent"><span>Indstil kalibrator til</span><div><input id="signalValue" type="number" step="any" aria-label="Fysisk signal"><b id="signalUnit">mA</b></div><small>Ekstern kalibrator</small></label>
-          <label class="metric-card"><span>Procent af span</span><div><input id="percentValue" type="number" step="any" aria-label="Procent"><b>%</b></div><small id="percentHint">Inden for måleområde</small></label>
-          <label class="metric-card"><span>PLC råværdi</span><div><input id="rawValue" type="number" step="1" aria-label="PLC råværdi"><b>RAW</b></div><small id="rawHint">0–27.648</small></label>
-          <div class="metric-card status-card"><span>Forventet interlock</span><strong id="interlockState">TRIP</strong><small id="interlockDetail">HH ved 9,00 bar</small></div>
+          <label class="metric-card accent" data-analog-simulator><span>Indstil kalibrator til</span><div><input id="signalValue" type="number" step="any" aria-label="Fysisk signal"><b id="signalUnit">mA</b></div><small>Ekstern kalibrator</small></label>
+          <label class="metric-card" data-analog-simulator><span>Procent af span</span><div><input id="percentValue" type="number" step="any" aria-label="Procent"><b>%</b></div><small id="percentHint">Inden for måleområde</small></label>
+          <label class="metric-card" data-analog-simulator><span>PLC råværdi</span><div><input id="rawValue" type="number" step="1" aria-label="PLC råværdi"><b>RAW</b></div><small id="rawHint">0–27.648</small></label>
+          <div id="contactCard" class="metric-card accent status-card hidden"><span>Kontaktstilling</span><strong id="contactState">—</strong></div>
+          <div class="metric-card status-card"><span>Forventet interlock</span><strong id="interlockState" aria-live="polite">—</strong><small id="interlockDetail"></small><button id="manualResetBtn" type="button" class="button button-ghost hidden" disabled>Simulér manuel reset</button></div>
         </div>
       </div>
       <div class="panel info-panel"><span aria-hidden="true">i</span><p><b>Ingen fysisk signaludgang.</b> Indstil den viste værdi på en godkendt ekstern proceskalibrator. Kontrollér altid polaritet, område og målepunkt.</p></div>
@@ -119,6 +124,6 @@
   </main>
 
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
-  <script type="module" src="app.js?v=5"></script>
+  <script type="module" src="app.js?v=6"></script>
 </body>
 </html>

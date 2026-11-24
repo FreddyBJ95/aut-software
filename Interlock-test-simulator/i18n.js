@@ -14,8 +14,56 @@ const en={
 'Dokumentation':'Documentation','Testrapport':'Test report','Konfigurationen i rapporten er et øjebliksbillede af den aktuelle test.':'The report configuration is a snapshot of the current test.','Eksportér JSON':'Export JSON','Importér JSON':'Import JSON','Udskriv / PDF':'Print / PDF','Interlock testprotokol':'Interlock test record','IKKE AFSLUTTET':'NOT COMPLETED','BESTÅET':'PASSED','FEJLET':'FAILED','Måleområde':'Measurement range','PLC råområde':'PLC raw range','Gennemført':'Completed','af':'of','Niveau / retning':'Level / direction','Testresultater':'Test results','Punkt':'Point','Forventet':'Expected','Observeret':'Observed','Tekniker / tid':'Technician / time','Sikkerhedsbegrænsning:':'Safety limitation:','Rapporten dokumenterer beregninger og manuelle observationer. Appen styrer ikke anlægget, udsender ikke fysiske signaler og erstatter ikke godkendte procedurer eller sikkerhedssystemer.':'The report documents calculations and manual observations. The app does not control equipment, output physical signals, or replace approved procedures or safety systems.',
 'Tryktransmitter':'Pressure transmitter','Proceslinje 1':'Process line 1','Højt tryk — HH alarm':'High pressure — HH alarm','Stop P-101, luk XV-101, blokér genstart':'Stop P-101, close XV-101, inhibit restart','trip forventet':'trip expected','aktiv — handlinger udført':'active — actions completed','fortsat aktiv':'still active','Projekt eksporteret':'Project exported','Projekt importeret':'Project imported','Filen er ikke et gyldigt projekt':'The file is not a valid project','Testsekvens genereret':'Test sequence generated','Teststart bekræftet':'Test start confirmed','Bekræft sikkerhedskontrollen før registrering':'Confirm the safety check before recording','Bekræft sikkerhedskontrollen før testen åbnes':'Confirm the safety check before opening the test','Udfyld instrument- og interlockdata først':'Complete the instrument and interlock data first'};
 
+const simulationTranslations = {
+  'Aktivering': ['Aktivering', 'Actuation'],
+  'Inaktiv': ['Inaktiv', 'Inactive'],
+  'Aktiv': ['Aktiv', 'Active'],
+  'Kontaktstilling': ['Kontaktstilling', 'Contact position'],
+  'Åben': ['Åpen', 'Open'],
+  'Lukket': ['Lukket', 'Closed'],
+  'kontakt': ['kontakt', 'contact'],
+  'Stigende: trip ved aktivering. Faldende: trip ved deaktivering.': [
+    'Stigende: trip ved aktivering. Fallende: trip ved deaktivering.',
+    'Rising: trip on actuation. Falling: trip on deactivation.'
+  ],
+  'Trip ved aktivering': ['Trip ved aktivering', 'Trip on actuation'],
+  'Trip ved deaktivering': ['Trip ved deaktivering', 'Trip on deactivation'],
+  'Afventer trip': ['Venter på trip', 'Trip pending'],
+  'Afventer manuel reset': ['Venter på manuell reset', 'Awaiting manual reset'],
+  'Simulér manuel reset': ['Simuler manuell reset', 'Simulate manual reset'],
+  'Trip om {seconds} sek.': ['Trip om {seconds} sek.', 'Trip in {seconds} sec.'],
+  'Hold signalet i {seconds} sek.': ['Hold signalet i {seconds} sek.', 'Hold the signal for {seconds} sec.'],
+  'Trip efter forsinkelse': ['Trip etter forsinkelse', 'Trip after delay'],
+  'Manuel reset': ['Manuell reset', 'Manual reset'],
+  'Skift til triptilstand': ['Bytt til triptilstand', 'Switch to trip state'],
+  'Tilbage til normal kontaktposition': ['Tilbake til normal kontaktstilling', 'Return to normal contact position'],
+  'Forbi resetgrænsen': ['Forbi resetgrensen', 'Past the reset limit'],
+  'Forsinkelse aktiv — intet trip endnu': ['Forsinkelse aktiv — ingen trip ennå', 'Delay active — no trip yet'],
+  'Reset mulig — afventer manuel reset': ['Reset mulig — venter på manuell reset', 'Reset available — awaiting manual reset'],
+  'Vælg en gyldig signaltype': ['Velg en gyldig signaltype', 'Select a valid signal type'],
+  'Procesmaksimum skal være større end procesminimum': ['Prosessmaksimum må være større enn prosessminimum', 'Process maximum must be greater than process minimum'],
+  'PLC-råmaksimum skal være større end PLC-råminimum': ['PLC-råmaksimum må være større enn PLC-råminimum', 'PLC raw maximum must be greater than PLC raw minimum'],
+  'Kontrollér det normale procesområde': ['Kontroller det normale prosessområdet', 'Check the normal process range'],
+  'Vælg en gyldig tripretning og resettype': ['Velg gyldig tripretning og resettype', 'Select a valid trip direction and reset type'],
+  'Forsinkelsen må ikke være negativ': ['Forsinkelsen må ikke være negativ', 'The delay must be zero or greater'],
+  'Indtast en afstand større end nul': ['Oppgi en avstand større enn null', 'Enter an offset greater than zero'],
+  'Trip- og resetgrænsen skal ligge inden for måleområdet': ['Trip- og resetgrensen må ligge innenfor måleområdet', 'Trip and reset limits must be within the measurement range'],
+  'Resetgrænsen ligger på den forkerte side af tripgrænsen': ['Resetgrensen ligger på feil side av tripgrensen', 'The reset limit is on the wrong side of the trip limit'],
+  'Testpunkterne ligger uden for måleområdet. Justér grænserne eller testafstanden': [
+    'Testpunktene ligger utenfor måleområdet. Juster grensene eller testavstanden.',
+    'Test points fall outside the measurement range. Adjust the limits or test offset.'
+  ],
+  'Testafstanden er for lille til at skelne testpunkterne': ['Testavstanden er for liten til å skille testpunktene', 'The test offset is too small to distinguish the test points'],
+  'Det normale procesområde skal indeholde en værdi på resetsiden': ['Det normale prosessområdet må inneholde en verdi på resetsiden', 'The normal process range must include a value on the reset side'],
+  'Kunne ikke gemme lokalt': ['Kunne ikke lagre lokalt', 'Could not save locally']
+};
+for (const [key, [norwegian, english]] of Object.entries(simulationTranslations)) {
+  no[key] = norwegian;
+  en[key] = english;
+}
+
 const dictionaries={da:{},no,en};const originals=new WeakMap(),attrs=new WeakMap();let locale='da';
-export const t=text=>dictionaries[locale]?.[text]||text;
+export const t=text=>Object.hasOwn(dictionaries[locale],text)?dictionaries[locale][text]:text;
 export function getLocale(){return locale}
-export function setLocale(next){locale=dictionaries[next]?next:'da';document.documentElement.lang=locale==='no'?'nb':locale;translateDom(document.body)}
+export function setLocale(next){locale=Object.hasOwn(dictionaries,next)?next:'da';document.documentElement.lang=locale==='no'?'nb':locale;translateDom(document.body)}
 export function translateDom(root=document.body){const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);let node;while((node=w.nextNode())){if(node.parentElement?.closest('script,style'))continue;if(!originals.has(node))originals.set(node,node.nodeValue);const original=originals.get(node),key=original.trim();if(key)node.nodeValue=original.replace(key,t(key))}root.querySelectorAll?.('[placeholder]').forEach(el=>{if(!attrs.has(el))attrs.set(el,el.getAttribute('placeholder'));el.setAttribute('placeholder',t(attrs.get(el)))})}
