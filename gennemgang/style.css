@@ -67,3 +67,34 @@
   .report-header h2 { font-size:18pt; }
   .report-issue .photos img { height:95mm; }
 }
+
+:root {
+  color:#123b4a;
+  background:#e4f0f3;
+  --line:#c7dce2;
+  --green:#123b4a;
+}
+body {
+  min-height:100vh;
+  background-image:linear-gradient(#668b951a 1px,transparent 1px),linear-gradient(90deg,#668b951a 1px,transparent 1px);
+  background-size:24px 24px;
+}
+body > header { background:#123b4a; border-bottom:3px solid #c55b3e; }
+.bar { min-height:68px; }
+.bar a { color:#f4f9fa; letter-spacing:-.02em; }
+.bar img { width:42px; height:42px; border-radius:5px; flex:none; }
+.language select { background:#eaf4f6; color:#123b4a; border-color:#72939e; min-height:36px; }
+h1 { letter-spacing:-.035em; }
+.panel,.card,.empty {
+  border-radius:8px;
+  border-color:#aec9d1;
+  box-shadow:0 4px 12px #123b4a0b;
+}
+#home .card { background:#fff; border-left:4px solid #668b95; }
+#home .card:hover { border-left-color:#a33f28; }
+#issue-form .panel > h2 { border-bottom:1px solid var(--line); padding-bottom:10px; }
+button,.secondary { border-radius:7px; }
+.secondary { color:#123b4a; border-color:#aec9d1; }
+input,select,textarea { border-color:#a5c1cb; background:#f8fcfd; }
+.types label:has(:checked) { background:#dceef3; border-color:#668b95; }
+@media print { body { background-image:none; } }

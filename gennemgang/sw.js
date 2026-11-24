@@ -1,6 +1,6 @@
 const cachePrefix = 'inspection:' + self.registration.scope + ':';
-const cacheName = cachePrefix + 'v13';
-const assets = ['./', 'index.html', 'style.css', 'app.js', 'language.js', 'app.webmanifest', 'icon-192.png', 'icon-512.png'];
+const cacheName = cachePrefix + 'v14';
+const assets = ['./', 'index.html', 'style.css', 'app.js', 'language.js', 'app.webmanifest', 'icon-192.png', 'icon-192.png?v=14', 'icon-512.png'];
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(cacheName).then(cache => cache.addAll(assets)));
 });
