@@ -115,6 +115,7 @@ async function showProject(project) {
     const card = element('details', '', 'card');
     card.append(element('summary', issueTitle(issue)));
     if (issue.landmark) card.append(element('p', t('Maskine i nærheden') + ' — ' + issue.landmark));
+    if (issue.equipmentTag) card.append(element('p', t('Skabs- eller følertag') + ' — ' + issue.equipmentTag));
     card.append(element('p', issue.types.map(typeLabel).join(' · ') || t('Kommentar')));
     if (issue.comment) card.append(element('p', issue.comment, 'comment'));
     const gallery = element('div', '', 'grid photos');
@@ -233,7 +234,7 @@ issueForm.onsubmit = run(async () => {
   const db = await database;
   const issue = {
     id:crypto.randomUUID(), projectId:activeProject.id, created:Date.now(),
-    floor:data.get('floor'), column, landmark:data.get('landmark').trim(), comment, types,
+    floor:data.get('floor'), column, landmark:data.get('landmark').trim(), equipmentTag:data.get('equipmentTag').trim(), comment, types,
     close:data.get('close'), wide:data.get('wide')
   };
   await transaction(db, ['issues','types'], 'readwrite', tx => {
@@ -297,6 +298,7 @@ byId('report-button').onclick = run(async () => {
     const card = element('article', '', 'panel report-issue');
     card.append(element('h2', issueTitle(issue)));
     if (issue.landmark) card.append(element('p', t('Maskine i nærheden') + ' — ' + issue.landmark));
+    if (issue.equipmentTag) card.append(element('p', t('Skabs- eller følertag') + ' — ' + issue.equipmentTag));
     if (issue.types.length) card.append(element('p', issue.types.map(typeLabel).join(' · ')));
     if (issue.comment) card.append(element('p', issue.comment, 'comment'));
     const gallery = element('div', '', 'grid photos');

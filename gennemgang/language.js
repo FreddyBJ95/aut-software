@@ -33,6 +33,8 @@ const translations = new Map([
   ['Placering','Plassering','Location'],
   ['Etage','Etasje','Floor'],
   ['Søjlenummer','Søylenummer','Column number'],
+  ['Skabs- eller følertag','Skap- eller følertag','Cabinet or sensor tag'],
+  ['Fx SK-01 eller PT-201','F.eks. SK-01 eller PT-201','E.g. SK-01 or PT-201'],
   ['Maskine i nærheden','Maskin i nærheten','Nearby machine'],
   ['Fx ved pumpe P-201, på siden mod trappen','F.eks. ved pumpe P-201, på siden mot trappen','E.g. near pump P-201, on the side facing the stairs'],
   ['Fejltyper','Feiltyper','Issue types'],
